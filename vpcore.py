@@ -6,7 +6,6 @@ from PyQt5.QtGui import *
 import cv2
 import sys,os,time
 import numpy as np
-import projects.function as function
 
 class EmbTerminal(QtWidgets.QWidget):
     def __init__(self, parent=None):
