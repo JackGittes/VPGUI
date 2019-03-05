@@ -21,7 +21,10 @@ class ResultArea(QWidget):
         self.WindowSize = [self.width(),self.height()]
 
         """A display tool used to control image display mode"""
-        self.Origin.setPixmap(QPixmap("./imgs/origin.png"))
+        h1Layout.setStretch(0,1)
+        h1Layout.setStretch(1,1)
+
+        self.Origin.setPixmap(QPixmap("./imgs/gakki.png"))
         self.Tested.setPixmap(QPixmap("./imgs/tested.png"))
 
         h1Layout.addWidget(self.Origin)
@@ -72,10 +75,11 @@ class ResultArea(QWidget):
     # avoid garbage-collection crash caused by image refreshing
 
     def UpdateImg(self,pic=None,type="Origin"):
+
         if pic is None:
             qImg = "./imgs/origin.png"
         else:
-            qImg = QImage(pic.data, self.width(), self.height(), 3 * self.width(), QImage.Format_RGB888)
+            qImg = QImage(pic.data, self.Origin.width(), self.Origin.height(), 3 * self.Origin.width(), QImage.Format_RGB888)
         if type=="Origin":
             self.Origin.setPixmap(QPixmap(qImg))
         elif type=="Tested":

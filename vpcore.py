@@ -152,7 +152,7 @@ class VPGUI(QMainWindow):
         Msg = QtWidgets.QMessageBox()
         Msg.setGeometry(QtCore.QRect(0,0, 100, 40))
         IconMap = QPixmap("./icons/png/protect.png")
-        IconMap = IconMap.scaled(50,50)
+        IconMap = IconMap.scaled(50,50,QtCore.Qt.SmoothTransformation)
         Msg.setIconPixmap(IconMap)
         Msg.setText("确认要退出？")
         Msg.setInformativeText("未保存的信息将丢失")

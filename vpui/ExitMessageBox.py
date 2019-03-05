@@ -9,7 +9,7 @@ class ExitMessage(QtWidgets.QMessageBox):
         initialGeometry = QtCore.QRect(0, 0, 100, 40)
         initialGeometry.moveCenter(Window.geometry().center())
         self.setGeometry(initialGeometry)
-        IconMap = QPixmap("./icons/png/unlink.png").scaled(60,60)
+        IconMap = QPixmap("./icons/png/unlink.png").scaled(60,60,QtCore.Qt.IgnoreAspectRatio,QtCore.Qt.SmoothTransformation)
         self.setIconPixmap(IconMap)
         self.setText("确认要退出？")
         self.setInformativeText("未保存的信息将丢失")

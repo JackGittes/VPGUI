@@ -1,1 +1,1 @@
-__all__ = ['ExitMessageBox','LogTab','ResultArea','RunButton','TestInfoBox','DownloadParamsWindow','BrowseFile']
+__all__ = ['ExitMessageBox','LogTab','ResultArea','RunButton','TestInfoBox','DownloadParamsWindow','BrowseFile','AboutInfo','ImageProcessThread']

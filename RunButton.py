@@ -2,8 +2,9 @@ from PyQt5.QtWidgets import QApplication,QLabel
 from PyQt5.QtWidgets import QWidget,QFileDialog,QMainWindow
 from PyQt5 import QtWidgets,QtCore
 from PyQt5.QtGui import *
+
 import sys,os
-import warnings
+
 from vpui import *
 import cv2
 
@@ -14,7 +15,9 @@ class VPGUI(QMainWindow):
         super().__init__()
         self.setMaximumSize(1920,1080)
         self.setMinimumSize(800,600)
-        self.setWindowIcon(QIcon("./icons/png/main.png"))
+
+        icon = QIcon(QPixmap("./icons/png/main.png").scaled(60,60,QtCore.Qt.IgnoreAspectRatio,QtCore.Qt.SmoothTransformation))
+        self.setWindowIcon(icon)
 
         self.Version = 1.0
         self.Name = "视觉芯片软件测试平台"
@@ -31,10 +34,11 @@ class VPGUI(QMainWindow):
         self.RunCtrl.StartTestButton.clicked.connect(lambda: self.UpdateResult())
         self.RunCtrl.DownloadParamsButton.clicked.connect(lambda: DownloadParamsWindow.DownloadWindow(self))
 
-        self.RunCtrl.StartTestButton.clicked.connect(lambda: print(self.geometry().center()))
+        self.RunCtrl.StartTestButton.clicked.connect(lambda: ImageProcessThread.RefreshResult().start())
         # self.ResultImg.PreviousButton.clicked.connect()
         # self.ResultImg.PlayPauseButton.clicked.connect()
         # self.ResultImg.NextButton.clicked.connect()
+
 
     def SetupGUI(self):
         self.SetupMenuBar()
@@ -69,24 +73,57 @@ class VPGUI(QMainWindow):
         FileMenu = self.menuBar().addMenu("文件")
         EditMenu = self.menuBar().addMenu("编辑")
         SettingMenu = self.menuBar().addMenu("设置")
-        RunMenu = self.menuBar().addMenu("运行")
         HelpMenu = self.menuBar().addMenu("帮助")
 
-        OpenFile = FileMenu.addAction("打开")
-        PathAct = FileMenu.addAction("路径")
-        PreferenceAct = FileMenu.addAction("偏好")
-        ExitAct = FileMenu.addAction("退出")
+        """File Menu Settings Begin"""
 
-        AboutButton = QtWidgets.QAction("关于")
-        AboutButton.setIcon(QIcon("./icons/png/logs.png"))
+        OpenFileAction = QtWidgets.QAction("打开",self)
+        OpenFileAction.setIcon(QIcon("./icons/png/openfile.png"))
 
-        HelpButton = QtWidgets.QAction("帮助")
-        HelpButton.setIcon(QIcon("./icons/png/what.png"))
+        SetPathAction = QtWidgets.QAction("路径",self)
+        SetPathAction.setIcon(QIcon("./icons/png/path.png"))
 
-        HelpMenu.addAction("查看日志")
-        HelpMenu.addAction("帮助")
-        HelpMenu.addAction("关于")
-        WriteLogAct = EditMenu.addAction("日志")
+        PreferenceAction = QtWidgets.QAction("偏好",self)
+        PreferenceAction.setIcon(QIcon("./icons/png/settings.png"))
+
+        ExitAction = QtWidgets.QAction("退出",self)
+        ExitAction.setIcon(QIcon("./icons/png/exit.png"))
+
+        FileMenu.addAction(OpenFileAction)
+        FileMenu.addAction(SetPathAction)
+        FileMenu.addAction(PreferenceAction)
+        FileMenu.addAction(ExitAction)
+
+        ExitAction.triggered.connect(lambda: ExitMessageBox.ExitMessage(self))
+
+        """Edit Menu Settings Begin"""
+        ConfigAction = QtWidgets.QAction("测试配置",self)
+        ConfigAction.setIcon(QIcon("./icons/png/logs.png"))
+
+        OutlookAction = QtWidgets.QAction("外观",self)
+        OutlookAction.setIcon(QIcon("./icons/png/outlook.png"))
+
+        EditMenu.addAction(ConfigAction)
+        EditMenu.addAction(OutlookAction)
+
+        """ Settings Menu Begin"""
+
+        """Help Menu Settings Begin"""
+        LookLogAction = QtWidgets.QAction("查看日志",self)
+        LookLogAction.setIcon(QIcon("./icons/png/docs.png"))
+
+        AboutAction = QtWidgets.QAction("关于",self)
+        AboutAction.setIcon(QIcon("./icons/png/logs.png"))
+
+        HelpAction = QtWidgets.QAction("帮助",self)
+        HelpAction.setIcon(QIcon("./icons/png/what.png"))
+        HelpAction.triggered.connect(lambda: os.system("xdg-open "+"./doc/document.pdf"))
+
+        HelpMenu.addAction(LookLogAction)
+        HelpMenu.addAction(HelpAction)
+        HelpMenu.addAction(AboutAction)
+
+        AboutAction.triggered.connect(lambda: AboutInfo.AboutWindow(self))
 
     def SetupToolBar(self):
         TestModeButton = QtWidgets.QPushButton("测试模式")
@@ -94,9 +131,7 @@ class VPGUI(QMainWindow):
         PreprocessButton = QtWidgets.QPushButton("预处理")
         UploadButton = QtWidgets.QPushButton("返回结果")
         ResetButton = QtWidgets.QPushButton("复位状态")
-        ExitTestButton = QtWidgets.QPushButton("退出测试")
         TestModeButton.setIcon(QIcon("./icons/png/settings.png"))
-        ExitTestButton.setIcon(QIcon("./icons/png/stop.png"))
         PrepareButton.setIcon(QIcon("./icons/png/connect.png"))
         PreprocessButton.setIcon(QIcon("./icons/png/process.png"))
         ResetButton.setIcon(QIcon("./icons/png/reset_hint.png"))
@@ -109,7 +144,6 @@ class VPGUI(QMainWindow):
         self.toolbar.addWidget(PreprocessButton)
         self.toolbar.addWidget(UploadButton)
         self.toolbar.addWidget(ResetButton)
-        self.toolbar.addWidget(ExitTestButton)
 
         TestMode = QtWidgets.QMenu()
         TestMode.addAction("舰船检测：分辨率32")
