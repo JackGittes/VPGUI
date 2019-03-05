@@ -13,9 +13,13 @@ class EmbTerminal(QtWidgets.QWidget):
         super(EmbTerminal, self).__init__(parent)
         self.process = QtCore.QProcess(self)
         self.terminal = QtWidgets.QWidget(self)
+        layout = QtWidgets.QVBoxLayout(self)
+        layout.addWidget(self.terminal)
+        # Works also with urxvt:
         self.process.start('xterm',['-into', str(int(self.winId()))])
+        self.setFixedSize(1000,500)
 
-class VPGUI(QMainWindow):
+class VPGUI(QWidget):
     def __init__(self,parent=None):
         """Here we initialize VPGUI and set some default params"""
         super(VPGUI, self).__init__(parent)
@@ -51,34 +55,76 @@ class VPGUI(QMainWindow):
 
         self.ExitButton = QtWidgets.QPushButton("结束并关闭",self)
         self.ExitButton.setIcon(QIcon("./icons/png/close.png"))
-        self.ExitButton.setGeometry(QtCore.QRect(width-BW-2*BGAP, height-BH-BGAP, BW, BH))
         self.ExitButton.clicked.connect(self.ExitMessageBox)
 
         self.LoadFileButton = QtWidgets.QPushButton("加载数据",self)
         self.LoadFileButton.setIcon(QIcon("./icons/png/openfile.png"))
-        self.LoadFileButton.setGeometry(QtCore.QRect(width-BW-2*BGAP, height-BH-5.5*BGAP, BW, BH))
+        # self.LoadFileButton.setGeometry(QtCore.QRect(width-BW-2*BGAP, height-BH-5.5*BGAP, BW, BH))
         self.LoadFileButton.clicked.connect(self.BrowseFile)
 
         self.DownloadParamsButton = QtWidgets.QPushButton("下载数据",self)
         self.DownloadParamsButton.setIcon(QIcon("./icons/png/down.png"))
-        self.DownloadParamsButton.setGeometry(QtCore.QRect(width-BW-2*BGAP, height-BH-4*BGAP,  BW, BH))
+        # self.DownloadParamsButton.setGeometry(QtCore.QRect(width-BW-2*BGAP, height-BH-4*BGAP,  BW, BH))
         self.DownloadParamsButton.clicked.connect(self.DownloadParams)
 
         self.StartTestButton = QtWidgets.QPushButton("开始测试",self)
         self.StartTestButton.setIcon(QIcon("./icons/png/start.png"))
-        self.StartTestButton.setGeometry(QtCore.QRect(width-BW-2*BGAP, height-BH-2.5*BGAP, BW, BH))
+        # self.StartTestButton.setGeometry(QtCore.QRect(width-BW-2*BGAP, height-BH-2.5*BGAP, BW, BH))
 
         # self.RunStatusMessage = QtWidgets.QTextBrowser(self)
         # self.RunStatusMessage.setGeometry(QtCore.QRect(50,height-height/4-BGAP,width/3,height/4))
         # self.RunStatusMessage.verticalScrollBar()
         # self.RunStatusMessage.lineWrapMode()
-        self.LogOutput()
+
         self.CreateImgWindow()
-        self.NameInitial()
+        # self.NameInitial()
         self.ToolBarTop()
-        self.ShowTestResult()
+        # self.ShowTestResult()
         self.TopMenuBar()
 
+        """Global Layout"""
+        gLayout = QtWidgets.QVBoxLayout()
+
+        """Menu Bar Area"""
+        menuArea = QWidget()
+        v0Layout = QtWidgets.QVBoxLayout()
+        v0Layout.addWidget(self.TopMenuBar())
+        v0Layout.addWidget(self.ToolBarTop())
+        menuArea.setLayout(v0Layout)
+
+        """Result Display Area"""
+        # resultArea = QWidget
+        # h1Layout = QtWidgets.QHBoxLayout()
+        # h1Layout.addWidget(self.Result1)
+        # h1Layout.addWidget(self.Result2)
+        # resultArea.setLayout(h1Layout)
+
+        """Log and Debug Area"""
+        logArea = QWidget()
+        h2Layout = QtWidgets.QHBoxLayout()
+        h2Layout.addWidget(self.LogOutput())
+        logArea.setLayout(h2Layout)
+
+        """Button Area"""
+        buttonArea = QWidget()
+        v1Layout = QtWidgets.QVBoxLayout()
+        v1Layout.addWidget(self.LoadFileButton)
+        v1Layout.addWidget(self.DownloadParamsButton)
+        v1Layout.addWidget(self.StartTestButton)
+        v1Layout.addWidget(self.ExitButton)
+        buttonArea.setLayout(v1Layout)
+
+        """Combine Log Area and Button Area"""
+        logbuttonArea = QWidget()
+        h3Layout = QtWidgets.QHBoxLayout()
+        h3Layout.addWidget(logArea)
+        h3Layout.addWidget(buttonArea)
+        logbuttonArea.setLayout(h3Layout)
+
+        gLayout.addWidget(menuArea)
+        # gLayout.addWidget(resultArea)
+        gLayout.addWidget(logbuttonArea)
+        self.setLayout(gLayout)
 
     def NameInitial(self):
         self.setWindowTitle(self.Name+" "+self.Version)
@@ -89,11 +135,12 @@ class VPGUI(QMainWindow):
         gap = int(margin/3)
         pos_x = gap
 
+
         self.DisplayOrigin = QLabel(self)
-        self.DisplayOrigin.setGeometry(QtCore.QRect(pos_x,pos_y,window_w,window_h))
+        # self.DisplayOrigin.setGeometry(QtCore.QRect(pos_x,pos_y,window_w,window_h))
 
         self.DisplayTested = QLabel(self)
-        self.DisplayTested.setGeometry(QtCore.QRect(pos_x+window_w+gap,pos_y,window_w,window_h))
+        # self.DisplayTested.setGeometry(QtCore.QRect(pos_x+window_w+gap,pos_y,window_w,window_h))
 
         imgs1 = cv2.imread("./imgs/gakki.png")
         imgs2 = cv2.imread("./imgs/tested.png")
@@ -108,6 +155,8 @@ class VPGUI(QMainWindow):
 
         self.DisplayOrigin.setPixmap(QPixmap(qImg1))
         self.DisplayTested.setPixmap(QPixmap(qImg2))
+        self.Result1 = QPixmap(qImg1)
+        self.Result2 = QPixmap(qImg2)
 
     def BrowseFile(self):
         filename = QFileDialog.getOpenFileName(self, "选择文件", os.getcwd())
@@ -117,6 +166,8 @@ class VPGUI(QMainWindow):
         return filename
 
     def ToolBarTop(self):
+        newBar = QtWidgets.QMainWindow()
+        toolbar = newBar.addToolBar("快速设置")
         TestModeButton = QtWidgets.QPushButton("测试模式")
         PrepareButton = QtWidgets.QPushButton("初始化")
         PreprocessButton = QtWidgets.QPushButton("预处理")
@@ -127,8 +178,6 @@ class VPGUI(QMainWindow):
         PrepareButton.setIcon(QIcon("./icons/png/connect.png"))
         PreprocessButton.setIcon(QIcon("./icons/png/process.png"))
         UploadButton.setIcon(QIcon("./icons/png/upload.png"))
-
-        toolbar = self.addToolBar("快速设置")
 
         toolbar.addWidget(TestModeButton)
         toolbar.addWidget(PrepareButton)
@@ -151,13 +200,14 @@ class VPGUI(QMainWindow):
 
     def ExitMessageBox(self):
         Msg = QtWidgets.QMessageBox()
-        Msg.setGeometry(QtCore.QRect(0,0, 100, 40))
+        # Msg.setGeometry(QtCore.QRect(0,0, 100, 40))
         IconMap = QPixmap("./icons/png/protect.png")
         IconMap = IconMap.scaled(50,50)
         Msg.setIconPixmap(IconMap)
         Msg.setText("确认要退出？")
         Msg.setInformativeText("未保存的信息将丢失")
         Msg.setWindowTitle("提示")
+        # Msg.setDetailedText("详细信息:"+str(self.Status))
 
         yesButton = Msg.addButton("确定",QtWidgets.QMessageBox.YesRole)
         noButton = Msg.addButton("取消", QtWidgets.QMessageBox.NoRole)
@@ -172,11 +222,12 @@ class VPGUI(QMainWindow):
             self.close()
 
     def TopMenuBar(self):
-        FileMenu = self.menuBar().addMenu("文件")
-        EditMenu = self.menuBar().addMenu("编辑")
-        SettingMenu = self.menuBar().addMenu("设置")
-        RunMenu = self.menuBar().addMenu("运行")
-        HelpMenu = self.menuBar().addMenu("帮助")
+        menuP = QtWidgets.QMainWindow()
+        FileMenu = menuP.menuBar().addMenu("文件")
+        EditMenu = menuP.menuBar().addMenu("编辑")
+        SettingMenu = menuP.menuBar().addMenu("设置")
+        RunMenu = menuP.menuBar().addMenu("运行")
+        HelpMenu = menuP.menuBar().addMenu("帮助")
 
         PathAct = FileMenu.addAction('工作路径')
         PreferenceAct = FileMenu.addAction("偏好")
@@ -195,6 +246,7 @@ class VPGUI(QMainWindow):
         AboutButton.triggered.connect(self.AboutInfo)
 
         WriteLogAct = EditMenu.addAction("日志")
+        return menuP
 
     """Here is vision chip test platform help document."""
     def HelpManual(self):
@@ -232,7 +284,7 @@ class VPGUI(QMainWindow):
         self.statusbar = QtWidgets.QStatusBar()
         barLabel = QLabel("工作模式")
         self.statusbar.addPermanentWidget(barLabel)
-        self.setGeometry(self.Width-5,self.Height-10,5,10)
+        # self.setGeometry(self.Width-5,self.Height-10,5,10)
 
     def DownloadParams(self):
         ChooseLoadType = QtWidgets.QMessageBox()
@@ -252,11 +304,18 @@ class VPGUI(QMainWindow):
             ChooseLoadType.destroy()
 
     def LogOutput(self):
+        central_widget = QtWidgets.QWidget()
+        lay = QtWidgets.QGridLayout(self.centralWidget())
+
         tab_widget = QtWidgets.QTabWidget()
-        tab_widget.addTab(QtWidgets.QTextBrowser(), "事件日志")
+        lay.addWidget(tab_widget,1,0)
+        lay.addWidget(self.DownloadParamsButton,1,1)
+        lay.addWidget(self.LoadFileButton,)
+
+        self.RunStatusMessage = QtWidgets.QTextBrowser()
+        tab_widget.addTab(self.RunStatusMessage, "事件日志")
         tab_widget.addTab(EmbTerminal(), "终端")
-        self.LogOut = tab_widget
-        self.setGeometry(50,600,300,150)
+        # tab_widget.addTab(QtWidgets.QMdiArea(), "Mdi")
 
     def __del__(self):
         self.LogID.close()
