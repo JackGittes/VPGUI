@@ -1,13 +1,20 @@
+
 from PyQt5.QtWidgets import QApplication,QLabel
 from PyQt5.QtWidgets import QWidget,QFileDialog,QMainWindow
 from PyQt5 import QtWidgets,QtCore
 from PyQt5.QtGui import *
 import sys
+# -*- coding: utf-8 -*-
 
 class RunButton(QWidget):
     def __init__(self):
         super().__init__()
         vLayout = QtWidgets.QVBoxLayout()
+# Form implementation generated from reading ui file 'RunButton.py'
+#
+# Created by: PyQt5 UI code generator 5.11.3
+#
+# WARNING! All changes made in this file will be lost!
 
         self.ExitButton = QtWidgets.QPushButton("结束并关闭")
         self.ExitButton.setIcon(QIcon("./icons/png/close.png"))
