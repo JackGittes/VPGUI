@@ -6,6 +6,7 @@ from PyQt5.QtGui import *
 import sys,os
 
 from vpui import *
+import function
 import cv2
 
 """ VPGUI Mainwindow used for vision chip test platform"""
@@ -28,17 +29,16 @@ class VPGUI(QMainWindow):
         self.SetupGUI()
         self.BuildConnect()
 
-    def Work(self,TYPE=1):
-        if TYPE==1:
-            self.thread = ThreadEngine.RefreshResult(self.ResultImg)
-        self.thread.start()
+        self.thread = ThreadEngine.BackendThread()
+        self.thread
 
     def BuildConnect(self):
         self.RunCtrl.ExitButton.clicked.connect(lambda: ExitMessageBox.ExitMessage(self))
         self.RunCtrl.LoadFileButton.clicked.connect(lambda: BrowseFile.FileDialog())
         self.RunCtrl.DownloadParamsButton.clicked.connect(lambda: DownloadParamsWindow.DownloadWindow(self))
+        self.RunCtrl.StartTestButton.clicked.connect(lambda: self.LogArea.RealTimeLog.append("nihao"))
+        # self.RunCtrl.StartTestButton.clicked.connect()
 
-        self.RunCtrl.StartTestButton.clicked.connect(lambda: self.Work())
         # self.ResultImg.PreviousButton.clicked.connect()
         # self.ResultImg.PlayPauseButton.clicked.connect()
         # self.ResultImg.NextButton.clicked.connect()
@@ -134,11 +134,14 @@ class VPGUI(QMainWindow):
         PreprocessButton = QtWidgets.QPushButton("预处理")
         UploadButton = QtWidgets.QPushButton("返回结果")
         ResetButton = QtWidgets.QPushButton("复位状态")
+        ChangeIOModeButton = QtWidgets.QPushButton("IO模式")
+
         TestModeButton.setIcon(QIcon("./icons/png/settings.png"))
         PrepareButton.setIcon(QIcon("./icons/png/connect.png"))
         PreprocessButton.setIcon(QIcon("./icons/png/process.png"))
         ResetButton.setIcon(QIcon("./icons/png/reset_hint.png"))
         UploadButton.setIcon(QIcon("./icons/png/upload.png"))
+
 
         self.toolbar = self.addToolBar("快捷设置")
 
@@ -147,6 +150,16 @@ class VPGUI(QMainWindow):
         self.toolbar.addWidget(PreprocessButton)
         self.toolbar.addWidget(UploadButton)
         self.toolbar.addWidget(ResetButton)
+        self.toolbar.addWidget(ChangeIOModeButton)
+
+        ChangeIOMode = QtWidgets.QMenu()
+        ChangeIOMode.addAction("模式1")
+        ChangeIOMode.addAction("模式2")
+        ChangeIOMode.addAction("模式3")
+        ChangeIOModeButton.setMenu(ChangeIOMode)
+        #
+        # ChangeIOModeButton
+        ChangeIOMode.triggered.connect(lambda action: ChangeIODispatcher(action.text()))
 
         TestMode = QtWidgets.QMenu()
         TestMode.addAction("舰船检测：分辨率32")
@@ -163,8 +176,20 @@ class VPGUI(QMainWindow):
         self.setStatusBar(statusBar)
         self.statusBar().addWidget(self.status)
 
+
+def ChangeIODispatcher(mode):
+    if mode == "模式1":
+        mode = 1
+    elif mode == "模式2":
+        mode = 2
+    elif mode == "模式3":
+        mode = 3
+    return function.change_io_mode(mode)
+
+
 if __name__=="__main__":
     app = QApplication(sys.argv)
     button = VPGUI()
     button.show()
+    # button.thread.run(button)
     sys.exit(app.exec_())

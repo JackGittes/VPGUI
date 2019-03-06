@@ -18,5 +18,11 @@ class DownloadWindow(QtWidgets.QMessageBox):
         vpButton =self.addButton("VP指令", QtWidgets.QMessageBox.YesRole)
         self.exec_()
 
+        # if self.clickedButton == imgButton:
+        #
+        # elif self.clickedButton == mpuButton:
+        #
+        # elif self.clickedButton == vpButton:
+
     def __del__(self):
         print("Download Box Destroyed")

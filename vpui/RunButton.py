@@ -12,10 +12,10 @@ class RunButton(QWidget):
         self.ExitButton = QtWidgets.QPushButton("结束并关闭")
         self.ExitButton.setIcon(QIcon("./icons/png/close.png"))
 
-        self.LoadFileButton = QtWidgets.QPushButton("加载数据")
+        self.LoadFileButton = QtWidgets.QPushButton("选择图像")
         self.LoadFileButton.setIcon(QIcon("./icons/png/openfile.png"))
 
-        self.DownloadParamsButton = QtWidgets.QPushButton("下载数据")
+        self.DownloadParamsButton = QtWidgets.QPushButton("选择数据")
         self.DownloadParamsButton.setIcon(QIcon("./icons/png/down.png"))
 
         self.StartTestButton = QtWidgets.QPushButton("开始测试")
