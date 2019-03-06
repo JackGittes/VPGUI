@@ -16,7 +16,7 @@ class VPGUI(QMainWindow):
         self.setMaximumSize(1920,1080)
         self.setMinimumSize(800,600)
 
-        icon = QIcon(QPixmap("./icons/png/main.png").scaled(60,60,QtCore.Qt.IgnoreAspectRatio,QtCore.Qt.SmoothTransformation))
+        icon = QIcon(QPixmap("./icons/png/main.png").scaled(60,65,QtCore.Qt.IgnoreAspectRatio,QtCore.Qt.SmoothTransformation))
         self.setWindowIcon(icon)
 
         self.Version = 1.0
@@ -28,17 +28,20 @@ class VPGUI(QMainWindow):
         self.SetupGUI()
         self.BuildConnect()
 
+    def Work(self,TYPE=1):
+        if TYPE==1:
+            self.thread = ThreadEngine.RefreshResult(self.ResultImg)
+        self.thread.start()
+
     def BuildConnect(self):
         self.RunCtrl.ExitButton.clicked.connect(lambda: ExitMessageBox.ExitMessage(self))
         self.RunCtrl.LoadFileButton.clicked.connect(lambda: BrowseFile.FileDialog())
-        self.RunCtrl.StartTestButton.clicked.connect(lambda: self.UpdateResult())
         self.RunCtrl.DownloadParamsButton.clicked.connect(lambda: DownloadParamsWindow.DownloadWindow(self))
 
-        self.RunCtrl.StartTestButton.clicked.connect(lambda: ImageProcessThread.RefreshResult().start())
+        self.RunCtrl.StartTestButton.clicked.connect(lambda: self.Work())
         # self.ResultImg.PreviousButton.clicked.connect()
         # self.ResultImg.PlayPauseButton.clicked.connect()
         # self.ResultImg.NextButton.clicked.connect()
-
 
     def SetupGUI(self):
         self.SetupMenuBar()

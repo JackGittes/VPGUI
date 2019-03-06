@@ -9,7 +9,8 @@ class LogTab(QWidget):
         hLayout = QtWidgets.QHBoxLayout()
 
         self.Log = QtWidgets.QTabWidget()
-        self.Log.addTab(QtWidgets.QTextBrowser(),"实时日志")
+        self.RealTimeLog = QtWidgets.QTextBrowser()
+        self.Log.addTab(self.RealTimeLog,"实时日志")
         self.Log.addTab(QtWidgets.QTextBrowser(),"错误信息")
         self.Log.addTab(QtWidgets.QTextBrowser(),"状态")
         hLayout.addWidget(self.Log)
