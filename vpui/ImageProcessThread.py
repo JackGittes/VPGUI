@@ -22,9 +22,12 @@ class Params2Bin(QtCore.QThread):
     def __init__(self):
         super().__init__()
 
+
 class RefreshResult(QtCore.QThread):
     def __init__(self):
         super().__init__()
+        self.Signal = QtCore.pyqtSignal()
+
     def run(self,ResultArea,TYPE="origin",GAP=0.2,path="/media/zhaomingxin/winF/PythonProject/VPGUI/projects/examples"):
         imgList = os.listdir(path)
         for item in imgList:
@@ -32,8 +35,8 @@ class RefreshResult(QtCore.QThread):
             img = cv2.resize(img, (300, 200))
             qImg = QImage(img.data, 300, 200, 3 * 300, QImage.Format_RGB888)
             print(item)
-            self.sleep(GAP*10)
-            ResultArea.Tested.setPixmap(QPixmap(qImg))
+            self.sleep(GAP)
+
             print("Setted")
 
     def __del__(self):

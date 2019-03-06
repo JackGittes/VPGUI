@@ -160,10 +160,6 @@ class VPGUI(QMainWindow):
         self.setStatusBar(statusBar)
         self.statusBar().addWidget(self.status)
 
-    def UpdateResult(self,path='./imgs/tested.png',type="Tested"):
-        Img = cv2.imread(path,cv2.COLOR_BGR2RGB)
-        self.ResultImg.UpdateImg(Img,type)
-
 if __name__=="__main__":
     app = QApplication(sys.argv)
     button = VPGUI()
