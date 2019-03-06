@@ -37,6 +37,9 @@ class VPGUI(QMainWindow):
         self.RunCtrl.LoadFileButton.clicked.connect(lambda: BrowseFile.FileDialog())
         self.RunCtrl.DownloadParamsButton.clicked.connect(lambda: DownloadParamsWindow.DownloadWindow(self))
         self.RunCtrl.StartTestButton.clicked.connect(lambda: self.LogArea.RealTimeLog.append("nihao"))
+
+        self.ResultImg.PreviousButton.clicked.connect(lambda: self.LogArea.RealTimeLog.append("前一首"))
+        self.ResultImg.PlayPauseButton.clicked.connect(lambda: self.LogArea.RealTimeLog.append("播放"))
         # self.RunCtrl.StartTestButton.clicked.connect()
 
         # self.ResultImg.PreviousButton.clicked.connect()
@@ -185,7 +188,6 @@ def ChangeIODispatcher(mode):
     elif mode == "模式3":
         mode = 3
     return function.change_io_mode(mode)
-
 
 if __name__=="__main__":
     app = QApplication(sys.argv)
