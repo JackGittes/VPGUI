@@ -25,12 +25,10 @@ class VPGUI(QMainWindow):
         self.setWindowTitle(self.Name+str(self.Version))
 
         self.Index = 0
+        self.threadpool = QtCore.QThreadPool()
 
         self.SetupGUI()
         self.BuildConnect()
-
-        self.thread = ThreadEngine.BackendThread()
-        self.thread
 
     def BuildConnect(self):
         self.RunCtrl.ExitButton.clicked.connect(lambda: ExitMessageBox.ExitMessage(self))
@@ -40,11 +38,16 @@ class VPGUI(QMainWindow):
 
         self.ResultImg.PreviousButton.clicked.connect(lambda: self.LogArea.RealTimeLog.append("前一首"))
         self.ResultImg.PlayPauseButton.clicked.connect(lambda: self.LogArea.RealTimeLog.append("播放"))
+        self.ResultImg.NextButton.clicked.connect(lambda: self.Convert())
         # self.RunCtrl.StartTestButton.clicked.connect()
 
         # self.ResultImg.PreviousButton.clicked.connect()
         # self.ResultImg.PlayPauseButton.clicked.connect()
         # self.ResultImg.NextButton.clicked.connect()
+    def Convert(self):
+        worker = ThreadEngine.Worker(ThreadEngine.AllImg2Bin)
+        worker.signals.finished.connect(lambda: self.LogArea.RealTimeLog.append("完成"))
+        self.threadpool.start(worker)
 
     def SetupGUI(self):
         self.SetupMenuBar()

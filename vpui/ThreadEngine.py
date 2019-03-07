@@ -90,6 +90,43 @@ class SignalMonitor(QtCore.QRunnable):
     def run(self):
         print("1")
 
+class WorkerSignal(QtCore.QObject):
+    finished = QtCore.pyqtSignal()
+    error = QtCore.pyqtSignal()
+    result = QtCore.pyqtSignal()
+
+class Worker(QtCore.QRunnable):
+
+    def __init__(self,WorkerFunc,*args,**kwargs):
+        super().__init__()
+        self.signals = WorkerSignal()
+        self.WorkerFunc = WorkerFunc
+        self.args = args
+        self.kwargs = kwargs
+
+    @QtCore.pyqtSlot()
+    def run(self):
+        try:
+            result = self.WorkerFunc(*self.args, **self.kwargs)
+        except:
+            print(self.WorkerFunc)
+            print("Some Error.")
+        else:
+            self.signals.result.emit()
+        finally:
+            self.signals.finished.emit()
+
+def AllImg2Bin(path="/media/zhaomingxin/winF/PythonProject/VPGUI/projects/examples"):
+    imgList = os.listdir(path)
+    img = cv2.imread(os.path.join(path,imgList[0]),cv2.COLOR_BGR2RGB)
+    img.tofile("/media/zhaomingxin/winE/Github/me2.bin")
+    time.sleep(5)
+    print("Convert Completed")
+    return "I'm Okay."
+
+
+
+
 
 
 
