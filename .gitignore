@@ -1,2 +1,6 @@
 
 *.tcl
+
+*.bin
+
+imgs/
